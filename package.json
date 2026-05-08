@@ -1,0 +1,21 @@
+{
+  "name": "pi-codex-quota-extension",
+  "version": "0.1.0",
+  "description": "Pi Coding Agent extension for displaying OpenAI Codex quota usage.",
+  "keywords": [
+    "pi-package",
+    "pi-extension",
+    "codex",
+    "quota"
+  ],
+  "license": "MIT",
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-tui": "*"
+  },
+  "pi": {
+    "extensions": [
+      "./codex-quota.ts"
+    ]
+  }
+}

@@ -2,20 +2,30 @@
 
 A Pi Coding Agent extension that displays OpenAI Codex quota usage from Pi OAuth credentials.
 
+## Install
+
+Install directly from GitHub:
+
+```bash
+pi install git:github.com/habitssss/pi-codex-quota-extension
+```
+
+Then restart Pi or run `/reload` so the extension is loaded.
+
 ## Commands
 
 - `/codex-quota` - show Codex 5h and 7d quota usage
 - `/codex-usage` - alias for `/codex-quota`
 
-## Install
+## Manual install
 
-Copy `codex-quota.ts` into your Pi agent extensions directory:
+Alternatively, copy `codex-quota.ts` into your Pi agent extensions directory:
 
 ```bash
 cp codex-quota.ts ~/.pi/agent/extensions/codex-quota.ts
 ```
 
-Then restart or reload Pi so the extension is loaded.
+Then restart Pi or run `/reload`.
 
 ## Notes
 
