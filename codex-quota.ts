@@ -57,7 +57,7 @@ export default function (pi: ExtensionAPI) {
   });
 
   pi.registerCommand("codex-quota", {
-    description: "Show OpenAI Codex 5h and 7d quota usage from Pi OAuth credentials",
+    description: "Show current OpenAI Codex quota usage from Pi OAuth credentials",
     handler: async (_args, ctx) => {
       try {
         const markdown = await buildQuotaMarkdown();
@@ -199,9 +199,7 @@ function renderUsage(credentials: Credentials, usage: UsageResponse): string {
     if (typeof rate.limit_reached === "boolean") lines.push(`- **Limit reached:** ${rate.limit_reached ? "yes" : "no"}`);
     if (typeof rate.allowed === "boolean" || typeof rate.limit_reached === "boolean") lines.push("");
 
-    lines.push(renderWindow("5h window", rate.primary_window));
-    lines.push("");
-    lines.push(renderWindow("7d window", rate.secondary_window));
+    lines.push(renderRateLimitWindows(rate));
   } else {
     lines.push("No `rate_limit` field found in the API response. The internal API schema may have changed.");
   }
@@ -210,11 +208,7 @@ function renderUsage(credentials: Credentials, usage: UsageResponse): string {
     lines.push("");
     lines.push("## Code review quota");
     lines.push("");
-    lines.push(renderWindow("Primary window", usage.code_review_rate_limit.primary_window));
-    if (usage.code_review_rate_limit.secondary_window) {
-      lines.push("");
-      lines.push(renderWindow("Secondary window", usage.code_review_rate_limit.secondary_window));
-    }
+    lines.push(renderRateLimitWindows(usage.code_review_rate_limit));
   }
 
   if (usage.credits) {
@@ -238,8 +232,22 @@ function renderUsage(credentials: Credentials, usage: UsageResponse): string {
   return lines.join("\n");
 }
 
-function renderWindow(title: string, window: WindowInfo | null | undefined): string {
-  if (!window) return `## ${title}\n\nNo data.`;
+function renderRateLimitWindows(rate: RateLimitInfo): string {
+  const windows: Array<[string, WindowInfo | null | undefined]> = [
+    ["Primary window", rate.primary_window],
+    ["Secondary window", rate.secondary_window],
+  ];
+  const rendered = windows.flatMap(([fallbackTitle, window]) => {
+    if (!window) return [];
+    const title = typeof window.limit_window_seconds === "number"
+      ? `${formatDuration(window.limit_window_seconds)} window`
+      : fallbackTitle;
+    return [renderWindow(title, window)];
+  });
+  return rendered.length > 0 ? rendered.join("\n\n") : "No quota window data.";
+}
+
+function renderWindow(title: string, window: WindowInfo): string {
   const percent = typeof window.used_percent === "number" ? window.used_percent : undefined;
   const bar = percent == null ? "n/a" : progressBar(percent);
   const duration = typeof window.limit_window_seconds === "number" ? formatDuration(window.limit_window_seconds) : "unknown";

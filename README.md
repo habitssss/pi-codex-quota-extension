@@ -14,7 +14,7 @@ Then restart Pi or run `/reload` so the extension is loaded.
 
 ## Commands
 
-- `/codex-quota` - show Codex 5h and 7d quota usage
+- `/codex-quota` - show the currently available Codex quota windows
 - `/codex-usage` - alias for `/codex-quota`
 
 ## Manual install
@@ -31,4 +31,5 @@ Then restart Pi or run `/reload`.
 
 - Reads OAuth credentials from `~/.pi/agent/auth.json` at runtime.
 - Tokens are used only in the request header and are never displayed.
+- Quota windows are labeled from the durations returned by OpenAI, so the output adapts when short-term limits are added or removed.
 - Uses OpenAI's undocumented internal `wham/usage` endpoint, which may change without notice.
